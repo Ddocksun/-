@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>행운의 룰렛!</title>
+	<style>
+		@font-face {
+    		font-family: 'DOSIyagiMedium';
+    		src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/DOSIyagiMedium.woff2') format('woff2');
+    		font-weight: normal;
+    		font-style: normal;
+		}
+		* {
+		font-family: 'DOSIyagiMedium';
+			}
+		html, body {
+			overflow: hidden;
+			height: 100%;
+			margin: 0;
+			background-image: url('배경.png'); 
+			background-size: cover; 
+			background-position: center; 
+			background-repeat: no-repeat;
+		}
+		.square {
+			width: 10vw;
+			height: 12vw;
+			background-color: white;
+			margin: 1vw;
+			position: absolute; 
+			border-radius: 0vw;
+			box-shadow: inset 0 0 1vw rgba(0, 0, 0, 0.5); 
+			z-index: 1;
+			display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 8rem; 
+            color: #e74c3c;
+		}
+		#slot {
+			width: 100vw; 
+			height: auto;
+			position: absolute;
+			top: 45%; 
+			left: 50%; 
+			transform: translate(-50%, -50%); 
+			z-index: 0; 
+		}
+		.square1 {
+			top: 31%; 
+			left: 33%; 
+		}
+		.square2 {
+			top: 31%; 
+			left: 44%; 
+		}
+		.square3 {
+			top: 31%; 
+			left: 55%; 
+		}
+		#luck{
+			z-index: 2;
+			font-size: 4.5rem;
+			position: absolute;
+			top: 18%; 
+			left: 50%; 
+			transform: translate(-50%, -50%);
+			color: white;
+			letter-spacing: -0.5rem;
+		}
+		#sbutton1 {
+			width: 8vw; 
+			height: auto;
+			position: absolute; 
+			top: 74%; 
+			left: 39%; 
+			transform: translate(-50%, -50%); 
+			z-index: 2; 
+		}
+		#sbutton2 {
+			width: 8vw; 
+			height: auto;
+			position: absolute; 
+			top: 74%; 
+			left: 50%; 
+			transform: translate(-50%, -50%); 
+			z-index: 2; 
+		}
+		#sbutton3 {
+			width: 8vw; 
+			height: auto;
+			position: absolute; 
+			top: 74%;
+			left: 61%; 
+			transform: translate(-50%, -50%); 
+			z-index: 2; 
+		}
+		#startB {
+			width: 15vw; 
+			height: auto;
+			position: absolute; 
+			top: 92%; 
+			left: 50%;
+			transform: translate(-50%, -50%); 
+			z-index: 2; 
+			animation: pulse 1s infinite; 
+		}
+		@keyframes pulse {
+			0%, 100% {
+				transform: translate(-50%, -50%) scale(1); 
+			}
+			50% {
+				transform: translate(-50%, -50%) scale(1.1); 
+			}
+		}
+		}
+	</style>
+</head>
+<body>
+	<img src="슬롯.png" id="slot">
+	<img src="스탑버튼.png" id="sbutton1">
+	<img src="스탑버튼.png" id="sbutton2">
+	<img src="스탑버튼.png" id="sbutton3">
+	<img src="스타트버튼.png" id="startB">
+	<audio src="slot.mp3" id="Ssound" loop></audio>
+	<div class="square square1">7</div>
+	<div class="square square2">7</div>
+	<div class="square square3">7</div>
+	<div id="luck">행운의 룰렛!</div>
+
+	<script>
+		let intervalIds = [];
+		let isStopped = [false, false, false]; 
+		let numbers = [0, 0, 0];
+		const sound = document.getElementById("Ssound"); 
+
+		function startRandomNumber() {
+			for (let i = 0; i < 3; i++) {
+				if (!isStopped[i]) {
+					numbers[i] = Math.floor(Math.random() * 10); 
+					document.querySelector(`.square${i + 1}`).textContent = numbers[i];
+				}
+			}
+		}
+
+		document.getElementById("startB").addEventListener("click", function() {
+			if (isStopped.every(stop => stop)) {
+				isStopped = [false, false, false]; 
+				numbers = [0, 0, 0];
+				document.querySelectorAll('.square').forEach(square => square.textContent = '7'); 
+			}
+			sound.play(); 
+			intervalIds.push(setInterval(startRandomNumber, 150)); 
+		});
+
+		document.getElementById("sbutton1").addEventListener("click", function() {
+			isStopped[0] = true;
+			checkWinCondition(); 
+		});
+		document.getElementById("sbutton2").addEventListener("click", function() {
+			isStopped[1] = true; 
+			checkWinCondition(); 
+		});
+		document.getElementById("sbutton3").addEventListener("click", function() {
+			isStopped[2] = true; 
+			checkWinCondition(); 
+		});
+
+		function checkWinCondition() {
+			if (isStopped.every(stop => stop)) {
+				if (numbers[0] === numbers[1] && numbers[1] === numbers[2]) {
+					alert("당신의 행운이 ♧잭팟!♧"); 
+				}
+				clearAllIntervals();
+			}
+		}
+
+		function clearAllIntervals() {
+			intervalIds.forEach(clearInterval);
+			intervalIds = [];
+			isStopped = [true, true, true];
+			sound.pause(); 
+			sound.currentTime = 0; 
+		}
+	</script>
+</body>
+</html>
